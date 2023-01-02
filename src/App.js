@@ -1,23 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import {useEffect, useState} from "react";
 
 function App() {
+  const [newsData, setNewsData] = useState([]);
+  useEffect(() => {
+    axios
+      .get(
+        "/api/harmonydic/contents/news.json?category=digital&approved=true&page=1&pageSize=20&pagesToShow=10&range=1"
+      )
+      .then((data) => {
+        setNewsData(data.data.list);
+      });
+  }, []);
+
+  console.log("newsDataList : ", newsData);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div>크롤링 연습</div>
+      {newsData &&
+        newsData.map((news) => (
+          <div key={news.contentId}>
+            {/* rel="noreferrer" or rel="noopener noreferrer" 은 보안 때문에 사용한다. */}
+            <a href={news.contentUrl} target="_blank" rel="noreferrer">
+              {news.title}
+            </a>
+          </div>
+        ))}
     </div>
   );
 }
